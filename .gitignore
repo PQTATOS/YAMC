@@ -1,0 +1,11 @@
+key.json
+root.crt
+.env
+source/backend/__pycache__/
+venv/
+packer-cfgs/vars.auto.pkrvars.hcl
+terraform-cfgs/terraform.tfstate
+terraform-cfgs/.terraform.lock.hcl
+terraform-cfgs/.terraform/
+terraform-cfgs/terraform.tfstate.backup
+terraform-cfgs/terraform.tfvars

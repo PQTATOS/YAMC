@@ -1,0 +1,12 @@
+ [Unit]
+ Description=minecraft-server
+ After=network.target
+ 
+ [Service]
+ User=ubuntu
+ Group=ubuntu
+ Restart=on-failure
+ ExecStart=java -Xmx2048M -Xms2048M -jar /home/ubuntu/server.jar nogui
+ 
+ [Install]
+ WantedBy=multi-user.target
