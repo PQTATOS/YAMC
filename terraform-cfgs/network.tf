@@ -25,3 +25,9 @@ resource "yandex_vpc_security_group" "group1" {
     port           = 6432
   }
 }
+
+resource "yandex_container_registry" "ymc" {
+  name      = "yamc-registry"
+  folder_id = var.folder_id
+
+}
