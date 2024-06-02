@@ -44,7 +44,7 @@ class Server(Base):
     user_id: Mapped[int] = mapped_column(ForeignKey("users.id", ondelete="CASCADE"), nullable=False, index=True)
     user: Mapped["User"] = relationship("User", back_populates="servers", foreign_keys=[user_id])
 
-    cloud_vm_id: Mapped[str] = mapped_column(String(length=100), unique=True, nullable=False)
+    cloud_vm_name: Mapped[str] = mapped_column(String(length=100), unique=True, nullable=False)
     srever_map_link: Mapped[str] = mapped_column(Text, unique=True, nullable=False)
 
     

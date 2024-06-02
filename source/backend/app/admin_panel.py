@@ -1,4 +1,4 @@
-from fastapi import APIRouter, Depends, Query, HTTPException
+from fastapi import APIRouter, Depends, Query, HTTPException, Body
 from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy import select
 
@@ -21,6 +21,7 @@ async def get_users(
 
     return [UserSchema.model_validate(user, from_attributes=True) for user in users]
 
+
 @admin_router.post("/users/delete")
 async def delete_user(
     user_id: int = Query(),
@@ -37,3 +38,25 @@ async def delete_user(
     await db_session.commit()
 
     return "ok"
+
+
+@admin_router.put("/users/update")
+async def delete_user(
+    user_id: int = Query(),
+    username: str = Body(),
+    admin: User = Depends(get_current_user),
+    db_session: AsyncSession = Depends(get_session)
+):
+    if not admin.is_admin:
+        raise HTTPException(status_code=403)
+    user = await db_session.scalar(select(User).where(User.id == user_id))
+    if user is None:
+        raise HTTPException(status_code=404, detail="User not found")
+    
+    user.username = username
+
+    await db_session.commit()
+
+    return UserSchema.model_validate(user, from_attributes=True)
+    
+    

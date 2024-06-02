@@ -1,6 +1,5 @@
 key.json
 root.crt
-.env
 source/backend/__pycache__/
 venv/
 packer-cfgs/vars.auto.pkrvars.hcl

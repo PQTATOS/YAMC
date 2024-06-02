@@ -8,3 +8,9 @@ class UserSchema(BaseModel):
 class UserRegSchema(BaseModel):
     username: str
     password: str
+
+
+class ServerSchema(BaseModel):
+    id: int
+    user_id: int
+    cloud_vm_name: str
