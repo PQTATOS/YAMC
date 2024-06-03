@@ -1,4 +1,4 @@
-from subprocess import Popen, PIPE
+import requests
 from uuid import uuid4
 import asyncio
 
@@ -6,10 +6,10 @@ from fastapi import APIRouter, Depends, Query, HTTPException
 from sqlalchemy import select
 from sqlalchemy.ext.asyncio import AsyncSession
 
-from app.database import User, Server
-from app.schemas import ServerSchema
-from app.auth import get_current_user, get_session
-from app.config import SUBNET_ID
+from database import User, Server
+from schemas import ServerSchema
+from auth import get_current_user, get_session
+from config import SUBNET_ID, IAM_TOKEN, FOLDER_ID
 
 server_router = APIRouter(prefix="/servers", tags=["server"])
 
@@ -20,7 +20,7 @@ async def add_server(
     db_session: AsyncSession = Depends(get_session)
 ):
     while True:
-        server_name = uuid4().hex
+        server_name = f"vm-{uuid4().hex}"
 
         server = await db_session.scalar(
             select(Server).where(Server.cloud_vm_name == server_name)
@@ -29,19 +29,20 @@ async def add_server(
         if server is None:
             break
     
-    server = Server(user_id=user.id, cloud_vm_name=server_name)
+    server = Server(user_id=user.id, cloud_vm_name=server_name, srever_map_link=server_name)
+    
+    headers={"Authorization": f"Bearer {IAM_TOKEN}"}
+    data = f'{{"folderId": "{FOLDER_ID}","name": "{server_name}","zoneId": "ru-central1-a","platformId": "standard-v3","resourcesSpec": {{"memory": "4294967296","cores": "2","coreFraction": "100"}},"bootDiskSpec": {{"diskSpec": {{"size": "19327352832","imageId": "fd8606smtda8ncrvctfh"}}}},"networkInterfaceSpecs": [{{"subnetId": "{SUBNET_ID}","primaryV4AddressSpec": {{"oneToOneNatSpec": {{"ipVersion": "IPV4"}}}}}}]}}'
+    print(data)
+    req = requests.post(
+        "https://compute.api.cloud.yandex.net/compute/v1/instances",
+        headers=headers,
+        data=data
+    )
 
-    task = f"yc compute instance create --name {server_name} --zone ru-central1-a --network-interface subnet-id={SUBNET_ID},nat-ip-version=ipv4"
-    proc = Popen(task,shell=True, stderr=PIPE, stdout=PIPE)
+    print(req.status_code, req.text)
     
-    while True:
-        retcode = proc.poll()
-        if retcode is None:
-            await asyncio.sleep(5)
-        else:
-            break
-    
-    await db_session.add(server)
+    db_session.add(server)
     await db_session.commit()
 
     return server_name

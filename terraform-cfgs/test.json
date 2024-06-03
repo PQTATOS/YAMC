@@ -1,8 +1,1 @@
-{
-  "db_host_FQDN": {
-    "sensitive": false,
-    "type": "string",
-    "value": "rc1a-irvrixa5o62m8u07.mdb.yandexcloud.net"
-  }
-}
-
+{"folderId": "{FOLDER_ID}","name": "{server_name}","zoneId": "ru-central1-a","platformId": "standard-v3","resourcesSpec": {"memory": "4294967296","cores": "2","coreFraction": "100"},"bootDiskSpec": {"diskSpec": {"size": "19327352832","blockSize": "string","imageId": "fd8606smtda8ncrvctfh"}},"networkInterfaceSpecs": [{"subnetId": "{SUBNET_ID}","primaryV4AddressSpec": {"oneToOneNatSpec": {"ipVersion": "IPV4"}}}]}
